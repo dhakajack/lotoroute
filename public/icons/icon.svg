@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Autoroloto">
+  <rect width="512" height="512" rx="112" fill="#f4c430"/>
+  <path d="M72 332c28-86 76-141 142-164 70-25 151-7 226 52" fill="none" stroke="#153f5c" stroke-width="44" stroke-linecap="round"/>
+  <path d="M92 368h328" stroke="#153f5c" stroke-width="42" stroke-linecap="round"/>
+  <rect x="124" y="236" width="264" height="110" rx="24" fill="#fff9e6" stroke="#153f5c" stroke-width="18"/>
+  <text x="256" y="310" text-anchor="middle" font-family="Arial, sans-serif" font-size="72" font-weight="800" fill="#153f5c">33</text>
+  <circle cx="166" cy="384" r="32" fill="#d8422e" stroke="#153f5c" stroke-width="14"/>
+  <circle cx="346" cy="384" r="32" fill="#2a8c74" stroke="#153f5c" stroke-width="14"/>
+</svg>
