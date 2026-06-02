@@ -157,17 +157,6 @@ button {
   height: 24px;
 }
 
-.seed-line {
-  min-height: 34px;
-  padding: 8px 12px;
-  border: 1px solid rgb(22 49 63 / 12%);
-  border-radius: 999px;
-  background: rgb(255 255 255 / 78%);
-  color: var(--muted);
-  font-size: 0.85rem;
-  font-weight: 800;
-}
-
 .win-banner {
   min-height: 48px;
   padding: 11px 14px;
@@ -294,12 +283,14 @@ button {
 .options-menu {
   width: min(92vw, 390px);
   min-height: 100%;
+  max-height: 100vh;
   padding: max(18px, env(safe-area-inset-top)) 16px max(22px, env(safe-area-inset-bottom));
   background: var(--paper);
   box-shadow: var(--shadow);
   display: flex;
   flex-direction: column;
   gap: 18px;
+  overflow: auto;
 }
 
 .menu-header {
@@ -314,6 +305,64 @@ button {
 .detail-panel h2 {
   margin: 0;
   font-size: 1.35rem;
+}
+
+.credits-header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.credits-header h2 {
+  text-align: center;
+}
+
+.credits-content {
+  display: grid;
+  gap: 12px;
+}
+
+.credit-entry {
+  padding: 12px;
+  border: 1px solid rgb(22 49 63 / 13%);
+  border-radius: 8px;
+  background: rgb(255 255 255 / 72%);
+}
+
+.credit-entry h3 {
+  margin: 0 0 6px;
+  color: var(--ink);
+  font-size: 1rem;
+}
+
+.credit-entry p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 750;
+  line-height: 1.35;
+}
+
+.credit-links {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.credit-links a {
+  min-height: 32px;
+  padding: 6px 9px;
+  border: 1px solid rgb(43 108 176 / 22%);
+  border-radius: 6px;
+  color: var(--blue);
+  background: rgb(255 255 255 / 82%);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.82rem;
+  font-weight: 900;
+  text-decoration: none;
 }
 
 .setting-row,
@@ -414,18 +463,25 @@ button {
   accent-color: var(--road);
 }
 
-.seed-line {
-  border-radius: 8px;
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.menu-actions,
+.menu-card-actions,
 .dialog-actions {
-  margin-top: auto;
   display: grid;
   gap: 10px;
+}
+
+.menu-card-actions {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.menu-secondary-actions {
+  margin-top: 10px;
+  padding-top: 14px;
+  border-top: 1px solid rgb(22 49 63 / 12%);
+  display: grid;
+}
+
+.dialog-actions {
+  margin-top: auto;
 }
 
 .primary-action,
@@ -450,6 +506,12 @@ button {
   background: white;
   color: var(--ink);
   border-color: rgb(22 49 63 / 16%);
+}
+
+.quiet-action {
+  min-height: 42px;
+  color: var(--muted);
+  background: rgb(255 255 255 / 58%);
 }
 
 .danger-action {

@@ -1,14 +1,15 @@
 import type { DifficultyLevel, GameMode, Locale, PlateItem, WinningLine } from "./types";
 
 type TranslationKey =
+  | "actions.back"
   | "actions.close"
   | "actions.cancel"
   | "actions.confirm"
   | "actions.newCard"
   | "actions.resetMarks"
   | "actions.options"
+  | "actions.credits"
   | "actions.details"
-  | "actions.seed"
   | "actions.mode"
   | "actions.difficulty"
   | "actions.location"
@@ -47,14 +48,15 @@ type TranslationKey =
 
 const messages: Record<Locale, Record<TranslationKey, string>> = {
   fr: {
+    "actions.back": "Retour",
     "actions.close": "Fermer",
     "actions.cancel": "Annuler",
     "actions.confirm": "Confirmer",
     "actions.newCard": "Nouvelle carte",
     "actions.resetMarks": "Effacer les marques",
     "actions.options": "Options",
+    "actions.credits": "À propos / Crédits",
     "actions.details": "Détails",
-    "actions.seed": "Graine",
     "actions.mode": "Mode",
     "actions.difficulty": "Difficulté",
     "actions.location": "Position",
@@ -92,14 +94,15 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     "difficulty.insane": "Dément"
   },
   en: {
+    "actions.back": "Back",
     "actions.close": "Close",
     "actions.cancel": "Cancel",
     "actions.confirm": "Confirm",
     "actions.newCard": "New card",
     "actions.resetMarks": "Clear marks",
     "actions.options": "Options",
+    "actions.credits": "About / Credits",
     "actions.details": "Details",
-    "actions.seed": "Seed",
     "actions.mode": "Mode",
     "actions.difficulty": "Difficulty",
     "actions.location": "Location",

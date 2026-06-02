@@ -180,7 +180,6 @@ export default function App() {
         difficulty={card.difficulty}
         locationCode={card.locationCode}
         haptics={haptics}
-        seed={card.seed}
         onOpenChange={setMenuOpen}
         onLocaleChange={changeLocale}
         onModeChange={changeMode}

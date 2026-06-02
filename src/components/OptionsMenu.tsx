@@ -1,4 +1,4 @@
-import { Gauge, Languages, MapPin, RotateCcw, Shuffle, Smartphone, X } from "lucide-react";
+import { ChevronLeft, ExternalLink, Gauge, Info, Languages, MapPin, RotateCcw, Shuffle, Smartphone, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { findNearestLocationCode, normalizeLocationCode } from "../data/geo";
 import { getPlateItemByCode, getPlateName } from "../data/plates";
@@ -13,7 +13,6 @@ type OptionsMenuProps = {
   difficulty: DifficultyLevel;
   locationCode: string;
   haptics: boolean;
-  seed: string;
   onOpenChange: (open: boolean) => void;
   onLocaleChange: (locale: Locale) => void;
   onModeChange: (mode: GameMode) => void;
@@ -26,6 +25,18 @@ type OptionsMenuProps = {
 
 const modes: GameMode[] = ["mixed", "france", "countries"];
 
+const sourceCodeUrl = "https://github.com/placeholder/lotoroute";
+
+const creditLinks = {
+  font: "https://github.com/playbeing/dinish",
+  fontLicense: "https://openfontlicense.org/",
+  flags: "https://flagpedia.net/",
+  regions:
+    "https://www.interieur.gouv.fr/actualites/actualites-du-ministere/nouvelles-regions-chartes-graphiques-des-plaques-dimmatriculation-de-vehicules",
+  geoApi: "https://geo.api.gouv.fr/",
+  notices: `${sourceCodeUrl}/blob/main/THIRD_PARTY_NOTICES.md`
+};
+
 export default function OptionsMenu({
   open,
   locale,
@@ -33,7 +44,6 @@ export default function OptionsMenu({
   difficulty,
   locationCode,
   haptics,
-  seed,
   onOpenChange,
   onLocaleChange,
   onModeChange,
@@ -43,6 +53,7 @@ export default function OptionsMenu({
   onResetRequest,
   onNewCardRequest
 }: OptionsMenuProps) {
+  const [panel, setPanel] = useState<"options" | "credits">("options");
   const [locationMode, setLocationMode] = useState<"manual" | "gps">("manual");
   const [manualLocation, setManualLocation] = useState(locationCode);
   const [gpsMessage, setGpsMessage] = useState("");
@@ -53,6 +64,12 @@ export default function OptionsMenu({
   useEffect(() => {
     setManualLocation(locationCode);
   }, [locationCode]);
+
+  useEffect(() => {
+    if (!open) {
+      setPanel("options");
+    }
+  }, [open]);
 
   if (!open) {
     return null;
@@ -81,6 +98,9 @@ export default function OptionsMenu({
 
   return (
     <div className="menu-backdrop" onClick={() => onOpenChange(false)}>
+          {panel === "credits" ? (
+            <CreditsPanel locale={locale} onBack={() => setPanel("options")} onClose={() => onOpenChange(false)} />
+          ) : (
           <section className="options-menu" aria-label={t(locale, "actions.options")} onClick={(event) => event.stopPropagation()}>
             <header className="menu-header">
               <h2>{t(locale, "actions.options")}</h2>
@@ -215,12 +235,7 @@ export default function OptionsMenu({
               />
             </label>
 
-            <div className="seed-line">
-              <span>{t(locale, "actions.seed")}</span>
-              <strong>{seed}</strong>
-            </div>
-
-            <div className="menu-actions">
+            <div className="menu-card-actions">
               <button className="secondary-action" type="button" onClick={onResetRequest}>
                 <RotateCcw size={18} aria-hidden="true" />
                 {t(locale, "actions.resetMarks")}
@@ -230,7 +245,116 @@ export default function OptionsMenu({
                 {t(locale, "actions.newCard")}
               </button>
             </div>
+            <div className="menu-secondary-actions">
+              <button className="secondary-action quiet-action" type="button" onClick={() => setPanel("credits")}>
+                <Info size={18} aria-hidden="true" />
+                {t(locale, "actions.credits")}
+              </button>
+            </div>
           </section>
+          )}
         </div>
+  );
+}
+
+function CreditsPanel({ locale, onBack, onClose }: { locale: Locale; onBack: () => void; onClose: () => void }) {
+  const entries =
+    locale === "fr"
+      ? [
+          {
+            title: "Code source",
+            text: "Le code source sera publié sur GitHub.",
+            links: [{ label: sourceCodeUrl, href: sourceCodeUrl }]
+          },
+          {
+            title: "Police",
+            text: "Les codes de la grille utilisent DINish Condensed Bold, par The DINish Project Authors, sous licence SIL Open Font License 1.1.",
+            links: [
+              { label: "DINish", href: creditLinks.font },
+              { label: "SIL OFL 1.1", href: creditLinks.fontLicense }
+            ]
+          },
+          {
+            title: "Drapeaux",
+            text: "Les images de drapeaux proviennent de Flagpedia.",
+            links: [{ label: "flagpedia.net", href: creditLinks.flags }]
+          },
+          {
+            title: "Logos régionaux",
+            text: "Les logos des régions françaises sont dérivés des chartes graphiques publiées par le Ministère de l'intérieur.",
+            links: [{ label: "Chartes graphiques", href: creditLinks.regions }]
+          },
+          {
+            title: "Données géographiques",
+            text: "Les coordonnées, populations et connexions sont compilées à partir de sources publiques et d'ajustements manuels documentés pour le modèle de jeu. Les départements français s'appuient notamment sur Geo API Gouv.",
+            links: [
+              { label: "Geo API Gouv", href: creditLinks.geoApi },
+              { label: "Notices tierces", href: creditLinks.notices }
+            ]
+          }
+        ]
+      : [
+          {
+            title: "Source Code",
+            text: "The source code will be published on GitHub.",
+            links: [{ label: sourceCodeUrl, href: sourceCodeUrl }]
+          },
+          {
+            title: "Font",
+            text: "Grid codes use DINish Condensed Bold, by The DINish Project Authors, under the SIL Open Font License 1.1.",
+            links: [
+              { label: "DINish", href: creditLinks.font },
+              { label: "SIL OFL 1.1", href: creditLinks.fontLicense }
+            ]
+          },
+          {
+            title: "Flags",
+            text: "Flag images come from Flagpedia.",
+            links: [{ label: "flagpedia.net", href: creditLinks.flags }]
+          },
+          {
+            title: "Regional Logos",
+            text: "French regional logos are derived from the graphic charters published by the French Ministry of the Interior.",
+            links: [{ label: "Graphic charters", href: creditLinks.regions }]
+          },
+          {
+            title: "Geographic Data",
+            text: "Coordinates, populations, and graph connections are compiled from public references plus manual adjustments documented for the game model. French departments use Geo API Gouv as a key reference.",
+            links: [
+              { label: "Geo API Gouv", href: creditLinks.geoApi },
+              { label: "Third-party notices", href: creditLinks.notices }
+            ]
+          }
+        ];
+
+  return (
+    <section className="options-menu credits-panel" aria-label={t(locale, "actions.credits")} onClick={(event) => event.stopPropagation()}>
+      <header className="menu-header credits-header">
+        <button className="icon-button" type="button" aria-label={t(locale, "actions.back")} onClick={onBack}>
+          <ChevronLeft aria-hidden="true" />
+        </button>
+        <h2>{t(locale, "actions.credits")}</h2>
+        <button className="icon-button" type="button" aria-label={t(locale, "actions.close")} onClick={onClose}>
+          <X aria-hidden="true" />
+        </button>
+      </header>
+
+      <div className="credits-content">
+        {entries.map((entry) => (
+          <section className="credit-entry" key={entry.title}>
+            <h3>{entry.title}</h3>
+            <p>{entry.text}</p>
+            <div className="credit-links">
+              {entry.links.map((link) => (
+                <a key={link.href} href={link.href} target="_blank" rel="noreferrer">
+                  {link.label}
+                  <ExternalLink size={14} aria-hidden="true" />
+                </a>
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
+    </section>
   );
 }

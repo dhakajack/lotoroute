@@ -9,7 +9,6 @@ const defaultProps = {
   difficulty: "average" as const,
   locationCode: "75",
   haptics: true,
-  seed: "TEST",
   onOpenChange: vi.fn(),
   onLocaleChange: vi.fn(),
   onModeChange: vi.fn(),
@@ -21,6 +20,19 @@ const defaultProps = {
 };
 
 describe("OptionsMenu location setup", () => {
+  it("opens credits as a nested panel and returns to options", () => {
+    render(<OptionsMenu {...defaultProps} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "À propos / Crédits" }));
+
+    expect(screen.getByRole("heading", { name: "À propos / Crédits" })).toBeTruthy();
+    expect(screen.getByText("DINish")).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: "Retour" }));
+
+    expect(screen.getByRole("heading", { name: "Options" })).toBeTruthy();
+  });
+
   it("resolves manual country input as the player types", () => {
     render(<OptionsMenu {...defaultProps} />);
 
