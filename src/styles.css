@@ -1,3 +1,11 @@
+@font-face {
+  font-family: "DINish Plate";
+  src: url("./assets/fonts/DINishCondensed-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   color: #16313f;
   background: #fff9e6;
@@ -184,7 +192,6 @@ button {
   grid-template-columns: repeat(var(--board-size), minmax(0, 1fr));
   gap: var(--gap);
   touch-action: manipulation;
-  container-type: inline-size;
 }
 
 .square {
@@ -199,6 +206,8 @@ button {
   display: grid;
   place-items: center;
   position: relative;
+  overflow: hidden;
+  container-type: inline-size;
   transition:
     transform 130ms ease,
     border-color 130ms ease,
@@ -208,20 +217,31 @@ button {
 }
 
 .square span {
-  width: calc(100% - 16px);
-  padding: 2px;
-  font-size: clamp(1.05rem, 11cqw, 2.9rem);
-  font-weight: 950;
+  width: 100%;
+  max-width: calc(100% - 14px);
+  min-width: 0;
+  font-family: "DINish Plate", "Bahnschrift SemiCondensed", "Arial Narrow", sans-serif;
+  padding: 0 2px;
+  font-weight: 700;
   line-height: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   white-space: nowrap;
+  letter-spacing: 0;
+}
+
+.square span.is-short-code {
+  font-size: clamp(1.65rem, 62cqw, 3.15rem);
+}
+
+.square span.is-medium-code {
+  font-size: clamp(1.45rem, 54cqw, 2.75rem);
 }
 
 .square span.is-long-code {
-  font-size: clamp(0.95rem, 8.4cqw, 2.25rem);
+  font-size: clamp(1.1rem, 38cqw, 2.05rem);
 }
 
 .square:focus-visible {

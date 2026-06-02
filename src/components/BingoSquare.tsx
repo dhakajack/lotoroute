@@ -68,7 +68,19 @@ export default function BingoSquare({
         }
       }}
     >
-      <span className={item.code.length >= 3 ? "is-long-code" : undefined}>{item.code}</span>
+      <span className={getCodeClassName(item.code)}>{item.code}</span>
     </button>
   );
+}
+
+function getCodeClassName(code: string): string {
+  if (code.length >= 3) {
+    return "is-long-code";
+  }
+
+  if (code.length === 2) {
+    return "is-medium-code";
+  }
+
+  return "is-short-code";
 }
