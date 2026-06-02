@@ -1,4 +1,4 @@
-# Autoroloto
+# Lotoroute
 
 Mobile-first road bingo for French department numbers and practical European registration codes.
 

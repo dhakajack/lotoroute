@@ -1,14 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import BingoBoard from "./components/BingoBoard";
 import ConfirmDialog from "./components/ConfirmDialog";
-import DetailPanel from "./components/DetailPanel";
-import InfoToast from "./components/InfoToast";
+import DetailPlate from "./components/DetailPlate";
+import LearningMessage from "./components/LearningMessage";
 import OptionsMenu from "./components/OptionsMenu";
-import WinBanner from "./components/WinBanner";
-import { getPlateName } from "./data/plates";
+import TitlePlate from "./components/TitlePlate";
 import { DEFAULT_BOARD_SIZE, generateCard } from "./game/generator";
 import { detectWinningLines, getWinningIndexSet } from "./game/win";
-import { modeLabel, t } from "./i18n";
+import { t } from "./i18n";
 import { loadStoredGame, saveStoredGame } from "./storage";
 import type { Card, GameMode, Locale, PlateItem } from "./types";
 
@@ -16,7 +15,7 @@ type ConfirmAction = "reset" | "new-card" | "mode" | null;
 
 export default function App() {
   const [storedGame, setStoredGame] = useState(loadStoredGame);
-  const [toast, setToast] = useState<string | null>(null);
+  const [learningItem, setLearningItem] = useState<PlateItem | null>(null);
   const [detailItem, setDetailItem] = useState<PlateItem | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [confirmAction, setConfirmAction] = useState<ConfirmAction>(null);
@@ -31,15 +30,6 @@ export default function App() {
     saveStoredGame(storedGame);
   }, [storedGame]);
 
-  useEffect(() => {
-    if (!toast) {
-      return;
-    }
-
-    const timer = window.setTimeout(() => setToast(null), 1900);
-    return () => window.clearTimeout(timer);
-  }, [toast]);
-
   function updateCard(updater: (card: Card) => Card) {
     setStoredGame((current) => ({
       ...current,
@@ -47,9 +37,9 @@ export default function App() {
     }));
   }
 
-  function showToastForItem(item: PlateItem, removed: boolean) {
-    const suffix = removed ? t(locale, "toast.removed") : t(locale, "toast.marked");
-    setToast(`${item.code} - ${getPlateName(item, locale)} ${suffix}`);
+  function showToastForItem(item: PlateItem) {
+    setLearningItem(item);
+    setDetailItem(null);
   }
 
   function toggleItem(item: PlateItem) {
@@ -67,7 +57,7 @@ export default function App() {
       navigator.vibrate(currentlyMarked ? 10 : 20);
     }
 
-    showToastForItem(item, currentlyMarked);
+    showToastForItem(item);
   }
 
   function changeLocale(nextLocale: Locale) {
@@ -141,33 +131,22 @@ export default function App() {
 
   return (
     <main className="app-shell">
-      <header className="topbar">
-        <div>
-          <p>{t(locale, "app.subtitle")}</p>
-          <h1>Autoroloto</h1>
-        </div>
-        <OptionsMenu
-          open={menuOpen}
-          locale={locale}
-          mode={card.mode}
-          haptics={haptics}
-          seed={card.seed}
-          onOpenChange={setMenuOpen}
-          onLocaleChange={changeLocale}
-          onModeChange={changeMode}
-          onHapticsChange={setHaptics}
-          onResetRequest={() => setConfirmAction("reset")}
-          onNewCardRequest={() => setConfirmAction("new-card")}
-        />
-      </header>
+      <TitlePlate locale={locale} menuOpen={menuOpen} onOptionsClick={() => setMenuOpen(true)} />
+      <OptionsMenu
+        open={menuOpen}
+        locale={locale}
+        mode={card.mode}
+        haptics={haptics}
+        seed={card.seed}
+        onOpenChange={setMenuOpen}
+        onLocaleChange={changeLocale}
+        onModeChange={changeMode}
+        onHapticsChange={setHaptics}
+        onResetRequest={() => setConfirmAction("reset")}
+        onNewCardRequest={() => setConfirmAction("new-card")}
+      />
 
-      <section className="game-meta" aria-label="Game details">
-        <span>{modeLabel(locale, card.mode)}</span>
-        <span>{card.size} x {card.size}</span>
-        <span>{card.seed}</span>
-      </section>
-
-      <WinBanner locale={locale} lines={winningLines} />
+      <LearningMessage item={learningItem} locale={locale} />
 
       <BingoBoard
         squares={card.squares}
@@ -179,9 +158,7 @@ export default function App() {
         onLongPress={setDetailItem}
       />
 
-      {detailItem ? <DetailPanel item={detailItem} locale={locale} onClose={() => setDetailItem(null)} /> : null}
-
-      <InfoToast message={toast} />
+      <DetailPlate item={detailItem} locale={locale} />
 
       {confirmCopy ? (
         <ConfirmDialog

@@ -1,4 +1,4 @@
-const CACHE_NAME = "autoroloto-v1";
+const CACHE_NAME = "lotoroute-v1";
 const APP_SHELL = [
   "/",
   "/index.html",

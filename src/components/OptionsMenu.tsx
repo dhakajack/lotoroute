@@ -1,4 +1,4 @@
-import { Languages, Menu, RotateCcw, Shuffle, Smartphone, X } from "lucide-react";
+import { Languages, RotateCcw, Shuffle, Smartphone, X } from "lucide-react";
 import type { GameMode, Locale } from "../types";
 import { modeLabel, t } from "../i18n";
 
@@ -31,20 +31,12 @@ export default function OptionsMenu({
   onResetRequest,
   onNewCardRequest
 }: OptionsMenuProps) {
-  return (
-    <>
-      <button
-        className="icon-button"
-        type="button"
-        aria-label={t(locale, "actions.options")}
-        aria-expanded={open}
-        onClick={() => onOpenChange(true)}
-      >
-        <Menu aria-hidden="true" />
-      </button>
+  if (!open) {
+    return null;
+  }
 
-      {open ? (
-        <div className="menu-backdrop" onClick={() => onOpenChange(false)}>
+  return (
+    <div className="menu-backdrop" onClick={() => onOpenChange(false)}>
           <section className="options-menu" aria-label={t(locale, "actions.options")} onClick={(event) => event.stopPropagation()}>
             <header className="menu-header">
               <h2>{t(locale, "actions.options")}</h2>
@@ -116,7 +108,5 @@ export default function OptionsMenu({
             </div>
           </section>
         </div>
-      ) : null}
-    </>
   );
 }

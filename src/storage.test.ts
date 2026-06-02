@@ -31,4 +31,17 @@ describe("storage", () => {
 
     expect(loadStoredGame().locale).toBe("fr");
   });
+
+  it("falls back when a stored card contains stale dataset items", () => {
+    const stale = generateCard({ seed: "STALE", mode: "france", size: 5 });
+    stale.squares[0] = {
+      code: "976",
+      name: "Mayotte",
+      kind: "FR_DEPT",
+      region: "Outre-mer"
+    };
+    saveStoredGame({ locale: "fr", card: stale });
+
+    expect(loadStoredGame().card.squares.some((item) => item.code === "976")).toBe(false);
+  });
 });

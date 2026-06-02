@@ -68,7 +68,7 @@ export default function BingoSquare({
         }
       }}
     >
-      <span>{item.code}</span>
+      <span className={item.code.length >= 3 ? "is-long-code" : undefined}>{item.code}</span>
     </button>
   );
 }

@@ -1,7 +1,6 @@
 import type { GameMode, Locale, PlateItem, WinningLine } from "./types";
 
 type TranslationKey =
-  | "app.subtitle"
   | "actions.close"
   | "actions.cancel"
   | "actions.confirm"
@@ -13,8 +12,6 @@ type TranslationKey =
   | "actions.mode"
   | "actions.language"
   | "actions.haptics"
-  | "toast.removed"
-  | "toast.marked"
   | "win.single"
   | "win.multiple"
   | "confirm.resetTitle"
@@ -27,6 +24,11 @@ type TranslationKey =
   | "detail.country"
   | "detail.region"
   | "detail.rarity"
+  | "detail.chefLieu"
+  | "detail.capital"
+  | "detail.population"
+  | "detail.empty"
+  | "learning.empty"
   | "mode.mixed"
   | "mode.france"
   | "mode.countries"
@@ -36,7 +38,6 @@ type TranslationKey =
 
 const messages: Record<Locale, Record<TranslationKey, string>> = {
   fr: {
-    "app.subtitle": "Loto de route",
     "actions.close": "Fermer",
     "actions.cancel": "Annuler",
     "actions.confirm": "Confirmer",
@@ -48,8 +49,6 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     "actions.mode": "Mode",
     "actions.language": "Langue",
     "actions.haptics": "Vibrations",
-    "toast.removed": "retire",
-    "toast.marked": "marque",
     "win.single": "Ligne complete",
     "win.multiple": "Lignes completes",
     "confirm.resetTitle": "Effacer les marques ?",
@@ -62,6 +61,11 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     "detail.country": "Pays",
     "detail.region": "Region",
     "detail.rarity": "Frequence",
+    "detail.chefLieu": "Chef-lieu",
+    "detail.capital": "Capitale",
+    "detail.population": "Population",
+    "detail.empty": "Appui long pour afficher les details",
+    "learning.empty": "Touchez une plaque",
     "mode.mixed": "France + Europe",
     "mode.france": "France",
     "mode.countries": "Pays",
@@ -70,7 +74,6 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     "rarity.rare": "rare"
   },
   en: {
-    "app.subtitle": "Road bingo",
     "actions.close": "Close",
     "actions.cancel": "Cancel",
     "actions.confirm": "Confirm",
@@ -82,8 +85,6 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     "actions.mode": "Mode",
     "actions.language": "Language",
     "actions.haptics": "Vibration",
-    "toast.removed": "removed",
-    "toast.marked": "marked",
     "win.single": "Complete line",
     "win.multiple": "Complete lines",
     "confirm.resetTitle": "Clear marks?",
@@ -96,6 +97,11 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     "detail.country": "Country",
     "detail.region": "Region",
     "detail.rarity": "Frequency",
+    "detail.chefLieu": "Capital",
+    "detail.capital": "Capital",
+    "detail.population": "Population",
+    "detail.empty": "Long press a square for details",
+    "learning.empty": "Tap a plate",
     "mode.mixed": "France + Europe",
     "mode.france": "France",
     "mode.countries": "Countries",

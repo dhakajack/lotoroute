@@ -1,4 +1,5 @@
 import type { Card, Locale, StoredGame } from "./types";
+import { getItemsForMode } from "./data/plates";
 import { DEFAULT_BOARD_SIZE, DEFAULT_MODE, generateCard } from "./game/generator";
 
 const STORAGE_KEY = "autoroloto.game.v1";
@@ -70,7 +71,7 @@ function isValidCard(card: unknown): card is Card {
   const candidate = card as Partial<Card>;
   const squareCount = (candidate.size ?? 0) * (candidate.size ?? 0);
 
-  return (
+  if (
     typeof candidate.id === "string" &&
     typeof candidate.seed === "string" &&
     typeof candidate.size === "number" &&
@@ -81,5 +82,10 @@ function isValidCard(card: unknown): card is Card {
     typeof candidate.marked === "object" &&
     candidate.marked !== null &&
     typeof candidate.createdAt === "string"
-  );
+  ) {
+    const validCodes = new Set(getItemsForMode(candidate.mode).map((item) => item.code));
+    return candidate.squares.every((item) => validCodes.has(item.code));
+  }
+
+  return false;
 }

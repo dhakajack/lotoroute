@@ -10,6 +10,11 @@ export type PlateItem = {
   shortName?: string;
   kind: PlateKind;
   region?: string;
+  chefLieu?: string;
+  capital?: string;
+  population?: number;
+  assetCode?: string;
+  regionAsset?: string;
   rarity?: Rarity;
 };
 

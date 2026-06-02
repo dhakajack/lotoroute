@@ -25,7 +25,7 @@ export default function BingoBoard({
     <div
       className="board"
       style={{ "--board-size": size } as CSSProperties}
-      aria-label="Autoroloto board"
+      aria-label="Lotoroute board"
     >
       {squares.map((item, index) => (
         <BingoSquare
