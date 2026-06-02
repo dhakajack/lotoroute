@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { findNearestLocationCode, getGeoNode, haversineKm, isKnownLocationCode } from "../data/geo";
+import { findNearestLocationCode, GEO_NODES, getGeoNode, haversineKm, isKnownLocationCode } from "../data/geo";
 import { ALL_PLATE_ITEMS } from "../data/plates";
 import { areNeighbors, getGraphDistance, scoreItem, scoreItemsForLocation } from "./difficulty";
 
@@ -15,6 +15,22 @@ describe("location-aware rarity scoring", () => {
     expect(getGraphDistance("75", "92")).toBe(1);
     expect(areNeighbors("06", "MC")).toBe(true);
     expect(getGraphDistance("75", "FIN")).toBeGreaterThan(1);
+  });
+
+  it("includes practical ferry and tunnel graph links", () => {
+    expect(areNeighbors("2A", "13")).toBe(true);
+    expect(areNeighbors("2B", "I")).toBe(true);
+    expect(areNeighbors("IS", "DK")).toBe(true);
+    expect(areNeighbors("CY", "GR")).toBe(true);
+    expect(areNeighbors("M", "I")).toBe(true);
+    expect(areNeighbors("GB", "62")).toBe(true);
+    expect(areNeighbors("UK", "62")).toBe(true);
+  });
+
+  it("connects every configured node to the default location graph", () => {
+    const unreachable = Object.keys(GEO_NODES).filter((code) => getGraphDistance("75", code) === null);
+
+    expect(unreachable).toEqual([]);
   });
 
   it("calculates Haversine distances in a sensible order", () => {
