@@ -15,7 +15,7 @@ Mobile-first road bingo for French department numbers and practical European reg
 
 ## Difficulty and Location Model
 
-Lotoroute scores each code relative to the player's selected location. The scoring model uses geographic distance, graph distance, shared-border bonuses, population, and small tuning adjustments to make easier cards favor common nearby plates and harder cards favor rarer finds.
+Lotoroute scores each code relative to the player's selected location. The scoring model uses geographic distance, graph distance, shared-border bonuses, population, and small tuning adjustments to feed three card-generation profiles: Cake walk, Average, and Insane. Cake walk strongly favors nearby/common plates, Average is weighted toward the middle with more easy than hard picks, and Insane favors rare plates while keeping the whole pool eligible.
 
 The connection graph is mostly based on direct land borders between departments and countries. A few practical ferry and tunnel links are included because they materially affect the license plates a player is likely to see:
 
@@ -35,6 +35,17 @@ Install Node.js 20 or newer, then run:
 npm install
 npm run dev
 ```
+
+## Debug Diagnostics
+
+The app has an opt-in console diagnostic mode for tuning the location-aware scoring model:
+
+```bash
+VITE_LOTOROUTE_DEBUG=true npm run dev
+VITE_LOTOROUTE_DEBUG=true npm run build
+```
+
+When enabled, tapping a grid square prints scoring details to the browser console. The output includes player and destination coordinates, the graph route such as `33->40->64->E->P`, graph and Haversine distance components, shared-border and population components, pair adjustment, raw score, normalized rating, inferred difficulty band, and the selected game difficulty.
 
 ## Checks
 

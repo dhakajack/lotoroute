@@ -42,9 +42,7 @@ type TranslationKey =
   | "mode.france"
   | "mode.countries"
   | "difficulty.cakewalk"
-  | "difficulty.easy"
   | "difficulty.average"
-  | "difficulty.challenging"
   | "difficulty.insane";
 
 const messages: Record<Locale, Record<TranslationKey, string>> = {
@@ -90,9 +88,7 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     "mode.france": "France",
     "mode.countries": "Pays",
     "difficulty.cakewalk": "Balade",
-    "difficulty.easy": "Facile",
     "difficulty.average": "Normal",
-    "difficulty.challenging": "Corsé",
     "difficulty.insane": "Dément"
   },
   en: {
@@ -137,9 +133,7 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     "mode.france": "France",
     "mode.countries": "Countries",
     "difficulty.cakewalk": "Cake walk",
-    "difficulty.easy": "Easy",
     "difficulty.average": "Average",
-    "difficulty.challenging": "Challenging",
     "difficulty.insane": "Insane"
   }
 };

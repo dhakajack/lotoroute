@@ -5,6 +5,7 @@ import DetailPlate from "./components/DetailPlate";
 import LearningMessage from "./components/LearningMessage";
 import OptionsMenu from "./components/OptionsMenu";
 import TitlePlate from "./components/TitlePlate";
+import { logSquareDebug } from "./debug";
 import { DEFAULT_BOARD_SIZE, generateCard } from "./game/generator";
 import { detectWinningLines, getWinningIndexSet } from "./game/win";
 import { t } from "./i18n";
@@ -49,6 +50,7 @@ export default function App() {
 
   function toggleItem(item: PlateItem) {
     const currentlyMarked = Boolean(card.marked[item.code]);
+    logSquareDebug(item, card, locale);
 
     updateCard((currentCard) => ({
       ...currentCard,

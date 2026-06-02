@@ -1,7 +1,7 @@
 export type PlateKind = "FR_DEPT" | "EU_COUNTRY" | "EUROPE_COUNTRY";
 export type GameMode = "mixed" | "france" | "countries";
 export type Locale = "fr" | "en";
-export type DifficultyLevel = "cakewalk" | "easy" | "average" | "challenging" | "insane";
+export type DifficultyLevel = "cakewalk" | "average" | "insane";
 
 export type PlateItem = {
   code: string;

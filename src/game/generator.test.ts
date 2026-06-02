@@ -31,30 +31,56 @@ describe("generateCard", () => {
   });
 
   it("keeps cards deterministic for the same difficulty and location", () => {
-    const first = generateCard({ seed: "SETUP", mode: "mixed", difficulty: "challenging", locationCode: "33", size: 5 });
-    const second = generateCard({ seed: "SETUP", mode: "mixed", difficulty: "challenging", locationCode: "33", size: 5 });
+    const first = generateCard({ seed: "SETUP", mode: "mixed", difficulty: "insane", locationCode: "33", size: 5 });
+    const second = generateCard({ seed: "SETUP", mode: "mixed", difficulty: "insane", locationCode: "33", size: 5 });
 
     expect(first.squares.map((item) => item.code)).toEqual(second.squares.map((item) => item.code));
-    expect(first.difficulty).toBe("challenging");
+    expect(first.difficulty).toBe("insane");
     expect(first.locationCode).toBe("33");
   });
 
-  it("skews harder difficulties toward higher dynamic rarity scores", () => {
+  it("balances cakewalk toward easy, average toward mid-range, and insane toward hard", () => {
     const scores = new Map(scoreItemsForLocation(getItemsForMode("mixed"), "75").map((entry) => [entry.item.code, entry.normalizedScore]));
-    const seeds = Array.from({ length: 40 }, (_, index) => `SKEW-${index}`);
+    const seeds = Array.from({ length: 140 }, (_, index) => `SKEW-${index}`);
 
-    const cakewalkAverage = averageCardScore(seeds, "cakewalk", scores);
-    const insaneAverage = averageCardScore(seeds, "insane", scores);
+    const cakewalk = summarizeCards(seeds, "cakewalk", scores);
+    const average = summarizeCards(seeds, "average", scores);
+    const insane = summarizeCards(seeds, "insane", scores);
 
-    expect(insaneAverage).toBeGreaterThan(cakewalkAverage);
+    expect(cakewalk.easy).toBeGreaterThan(seeds.length * 7);
+    expect(cakewalk.hard).toBeLessThan(seeds.length * 2);
+    expect(average.mid).toBeGreaterThan(average.easy);
+    expect(average.easy).toBeGreaterThan(average.hard);
+    expect(insane.hard).toBeGreaterThan(insane.mid);
+    expect(insane.easy).toBeLessThan(insane.hard / 3);
+    expect(cakewalk.averageScore).toBeLessThan(average.averageScore);
+    expect(average.averageScore).toBeLessThan(insane.averageScore);
   });
 });
 
-function averageCardScore(seeds: string[], difficulty: "cakewalk" | "insane", scores: Map<string, number>): number {
-  const cardScores = seeds.map((seed) => {
-    const card = generateCard({ seed, mode: "mixed", difficulty, locationCode: "75", size: 5 });
-    return card.squares.reduce((sum, item) => sum + (scores.get(item.code) ?? 0), 0) / card.squares.length;
-  });
+function summarizeCards(seeds: string[], difficulty: "cakewalk" | "average" | "insane", scores: Map<string, number>) {
+  const summary = { easy: 0, mid: 0, hard: 0, scoreTotal: 0, itemCount: 0 };
 
-  return cardScores.reduce((sum, score) => sum + score, 0) / cardScores.length;
+  for (const seed of seeds) {
+    const card = generateCard({ seed, mode: "mixed", difficulty, locationCode: "75", size: 5 });
+
+    for (const item of card.squares) {
+      const score = scores.get(item.code) ?? 0;
+      summary.scoreTotal += score;
+      summary.itemCount += 1;
+
+      if (score < 34) {
+        summary.easy += 1;
+      } else if (score < 67) {
+        summary.mid += 1;
+      } else {
+        summary.hard += 1;
+      }
+    }
+  }
+
+  return {
+    ...summary,
+    averageScore: summary.scoreTotal / summary.itemCount
+  };
 }

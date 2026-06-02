@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { findNearestLocationCode, GEO_NODES, getGeoNode, haversineKm, isKnownLocationCode } from "../data/geo";
 import { ALL_PLATE_ITEMS } from "../data/plates";
-import { areNeighbors, getGraphDistance, scoreItem, scoreItemsForLocation } from "./difficulty";
+import { areNeighbors, getGraphDistance, getGraphPath, getScoreBreakdown, scoreItem, scoreItemsForLocation } from "./difficulty";
 
 describe("location-aware rarity scoring", () => {
   it("has geo metadata for every playable code and rejects France as F", () => {
@@ -15,6 +15,10 @@ describe("location-aware rarity scoring", () => {
     expect(getGraphDistance("75", "92")).toBe(1);
     expect(areNeighbors("06", "MC")).toBe(true);
     expect(getGraphDistance("75", "FIN")).toBeGreaterThan(1);
+  });
+
+  it("returns a shortest graph path for diagnostics", () => {
+    expect(getGraphPath("33", "P")).toEqual(["33", "40", "64", "E", "P"]);
   });
 
   it("includes practical ferry and tunnel graph links", () => {
@@ -46,6 +50,16 @@ describe("location-aware rarity scoring", () => {
 
   it("scores nearby populous neighbors as less rare than distant small places", () => {
     expect(scoreItem("92", "75")).toBeLessThan(scoreItem("V", "75"));
+  });
+
+  it("explains score components for diagnostics", () => {
+    const breakdown = getScoreBreakdown("P", "33");
+
+    expect(breakdown?.route).toEqual(["33", "40", "64", "E", "P"]);
+    expect(breakdown?.rawScore).toBe(scoreItem("P", "33"));
+    expect(breakdown?.graphDistanceComponent).toBeGreaterThan(0);
+    expect(breakdown?.distanceLogComponent).toBeGreaterThan(0);
+    expect(breakdown?.populationComponent).toBeLessThan(0);
   });
 
   it("normalizes scored items to a 0-100 rarity scale", () => {

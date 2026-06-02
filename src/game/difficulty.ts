@@ -5,13 +5,16 @@ import { createSeededRandom } from "./random";
 export const DEFAULT_DIFFICULTY: DifficultyLevel = "average";
 export const DEFAULT_LOCATION_CODE = "75";
 
-export const DIFFICULTY_LEVELS: DifficultyLevel[] = ["cakewalk", "easy", "average", "challenging", "insane"];
+export const DIFFICULTY_LEVELS: DifficultyLevel[] = ["cakewalk", "average", "insane"];
 
 type DifficultyProfile = {
-  rarityPower: number;
-  commonPower: number;
-  rarityWeight: number;
-  commonWeight: number;
+  easyWeight: number;
+  easyPower: number;
+  midWeight: number;
+  midCenter: number;
+  midSpread: number;
+  hardWeight: number;
+  hardPower: number;
   floor: number;
 };
 
@@ -35,11 +38,36 @@ export const rarityScoringConfig = {
     "68:CH": -0.5
   } as Record<string, number>,
   difficultyProfiles: {
-    cakewalk: { rarityPower: 3, commonPower: 0.45, rarityWeight: 0.15, commonWeight: 1.6, floor: 0.08 },
-    easy: { rarityPower: 2, commonPower: 0.7, rarityWeight: 0.45, commonWeight: 1.3, floor: 0.1 },
-    average: { rarityPower: 1, commonPower: 1, rarityWeight: 1, commonWeight: 1, floor: 0.18 },
-    challenging: { rarityPower: 0.7, commonPower: 2, rarityWeight: 1.4, commonWeight: 0.45, floor: 0.08 },
-    insane: { rarityPower: 0.45, commonPower: 3, rarityWeight: 1.8, commonWeight: 0.12, floor: 0.04 }
+    cakewalk: {
+      easyWeight: 250,
+      easyPower: 6.5,
+      midWeight: 1,
+      midCenter: 36,
+      midSpread: 10,
+      hardWeight: 0.0005,
+      hardPower: 6,
+      floor: 0.00005
+    },
+    average: {
+      easyWeight: 100,
+      easyPower: 5,
+      midWeight: 12,
+      midCenter: 47,
+      midSpread: 13,
+      hardWeight: 0.01,
+      hardPower: 5,
+      floor: 0.0005
+    },
+    insane: {
+      easyWeight: 0.08,
+      easyPower: 3,
+      midWeight: 2,
+      midCenter: 62,
+      midSpread: 24,
+      hardWeight: 7,
+      hardPower: 1.3,
+      floor: 0.03
+    }
   } satisfies Record<DifficultyLevel, DifficultyProfile>
 };
 
@@ -47,6 +75,30 @@ export type ScoredPlateItem = {
   item: PlateItem;
   rawScore: number;
   normalizedScore: number;
+};
+
+export type ScoreBreakdown = {
+  locationCode: string;
+  itemCode: string;
+  route: string[];
+  coordinates: {
+    location: { latitude: number; longitude: number };
+    item: { latitude: number; longitude: number };
+  };
+  graphDistance: number | null;
+  cappedGraphDistance: number;
+  graphDistanceComponent: number;
+  distanceKm: number;
+  cappedDistanceKm: number;
+  distanceLogComponent: number;
+  sharedBorderBonus: number;
+  sharedBorderComponent: number;
+  population: number;
+  populationTerm: number;
+  populationComponent: number;
+  pairAdjustment: number;
+  base: number;
+  rawScore: number;
 };
 
 export function scoreItemsForLocation(items: PlateItem[], locationCode: string): ScoredPlateItem[] {
@@ -67,33 +119,62 @@ export function scoreItemsForLocation(items: PlateItem[], locationCode: string):
 }
 
 export function scoreItem(itemCode: string, locationCode: string): number {
+  return getScoreBreakdown(itemCode, locationCode)?.rawScore ?? 100;
+}
+
+export function getScoreBreakdown(itemCode: string, locationCode: string): ScoreBreakdown | null {
   const item = getGeoNode(itemCode);
   const location = getGeoNode(locationCode);
 
   if (!item || !location) {
-    return 100;
+    return null;
   }
 
-  const graphDistance = Math.min(
-    getGraphDistance(location.code, item.code) ?? rarityScoringConfig.disconnectedGraphDistance,
+  const graphDistance = getGraphDistance(location.code, item.code);
+  const cappedGraphDistance = Math.min(
+    graphDistance ?? rarityScoringConfig.disconnectedGraphDistance,
     rarityScoringConfig.maxGraphDistance
   );
-  const distanceKm = Math.min(
-    haversineKm(location.latitude, location.longitude, item.latitude, item.longitude),
-    rarityScoringConfig.maxDistanceKm
-  );
+  const distanceKm = haversineKm(location.latitude, location.longitude, item.latitude, item.longitude);
+  const cappedDistanceKm = Math.min(distanceKm, rarityScoringConfig.maxDistanceKm);
   const sharedBorder = areNeighbors(location.code, item.code) ? 1 : 0;
   const populationTerm = Math.min(Math.log(item.population / 100000 + 1), rarityScoringConfig.maxPopulationTerm);
   const pairAdjustment = getPairAdjustment(location.code, item.code);
-
-  return (
+  const graphDistanceComponent = rarityScoringConfig.graphDistanceWeight * cappedGraphDistance;
+  const distanceLogComponent = rarityScoringConfig.distanceLogWeight * Math.log(cappedDistanceKm + 1);
+  const sharedBorderComponent = -rarityScoringConfig.sharedBorderWeight * sharedBorder;
+  const populationComponent = -rarityScoringConfig.populationLogWeight * populationTerm;
+  const rawScore =
     rarityScoringConfig.base +
-    rarityScoringConfig.graphDistanceWeight * graphDistance +
-    rarityScoringConfig.distanceLogWeight * Math.log(distanceKm + 1) -
-    rarityScoringConfig.sharedBorderWeight * sharedBorder -
-    rarityScoringConfig.populationLogWeight * populationTerm +
-    pairAdjustment
-  );
+    graphDistanceComponent +
+    distanceLogComponent +
+    sharedBorderComponent +
+    populationComponent +
+    pairAdjustment;
+
+  return {
+    locationCode: location.code,
+    itemCode: item.code,
+    route: getGraphPath(location.code, item.code) ?? [],
+    coordinates: {
+      location: { latitude: location.latitude, longitude: location.longitude },
+      item: { latitude: item.latitude, longitude: item.longitude }
+    },
+    graphDistance,
+    cappedGraphDistance,
+    graphDistanceComponent,
+    distanceKm,
+    cappedDistanceKm,
+    distanceLogComponent,
+    sharedBorderBonus: sharedBorder,
+    sharedBorderComponent,
+    population: item.population,
+    populationTerm,
+    populationComponent,
+    pairAdjustment,
+    base: rarityScoringConfig.base,
+    rawScore
+  };
 }
 
 export function pickWeightedByDifficulty(
@@ -129,6 +210,12 @@ export function pickWeightedByDifficulty(
 }
 
 export function getGraphDistance(startCode: string, targetCode: string): number | null {
+  const path = getGraphPath(startCode, targetCode);
+
+  return path ? path.length - 1 : null;
+}
+
+export function getGraphPath(startCode: string, targetCode: string): string[] | null {
   const start = getGeoNode(startCode);
   const target = getGeoNode(targetCode);
 
@@ -137,12 +224,12 @@ export function getGraphDistance(startCode: string, targetCode: string): number 
   }
 
   if (start.code === target.code) {
-    return 0;
+    return [start.code];
   }
 
   const adjacency = getBidirectionalAdjacency();
   const seen = new Set([start.code]);
-  const queue: Array<{ code: string; distance: number }> = [{ code: start.code, distance: 0 }];
+  const queue: Array<{ code: string; path: string[] }> = [{ code: start.code, path: [start.code] }];
 
   while (queue.length > 0) {
     const current = queue.shift();
@@ -152,12 +239,12 @@ export function getGraphDistance(startCode: string, targetCode: string): number 
 
     for (const neighbor of adjacency[current.code] ?? []) {
       if (neighbor === target.code) {
-        return current.distance + 1;
+        return [...current.path, neighbor];
       }
 
       if (!seen.has(neighbor)) {
         seen.add(neighbor);
-        queue.push({ code: neighbor, distance: current.distance + 1 });
+        queue.push({ code: neighbor, path: [...current.path, neighbor] });
       }
     }
   }
@@ -172,11 +259,14 @@ export function areNeighbors(firstCode: string, secondCode: string): boolean {
 function getDifficultyWeight(normalizedScore: number, profile: DifficultyProfile): number {
   const rarity = normalizedScore / 100;
   const commonness = 1 - rarity;
+  const midDistance = normalizedScore - profile.midCenter;
+  const midBell = Math.exp(-(midDistance * midDistance) / (2 * profile.midSpread * profile.midSpread));
 
   return (
     profile.floor +
-    profile.rarityWeight * Math.pow(rarity, profile.rarityPower) +
-    profile.commonWeight * Math.pow(commonness, profile.commonPower)
+    profile.easyWeight * Math.pow(commonness, profile.easyPower) +
+    profile.midWeight * midBell +
+    profile.hardWeight * Math.pow(rarity, profile.hardPower)
   );
 }
 
