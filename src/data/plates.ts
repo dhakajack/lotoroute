@@ -68,8 +68,8 @@ export const FRENCH_DEPARTMENTS: PlateItem[] = [
   { code: "64", name: "Pyrenees-Atlantiques", kind: "FR_DEPT", region: "Nouvelle-Aquitaine", rarity: "common" },
   { code: "65", name: "Hautes-Pyrenees", kind: "FR_DEPT", region: "Occitanie" },
   { code: "66", name: "Pyrenees-Orientales", kind: "FR_DEPT", region: "Occitanie" },
-  { code: "67", name: "Bas-Rhin", kind: "FR_DEPT", region: "Grand Est" },
-  { code: "68", name: "Haut-Rhin", kind: "FR_DEPT", region: "Grand Est" },
+  { code: "67", name: "Bas-Rhin", kind: "FR_DEPT", region: "Grand Est", regionAsset: "als" },
+  { code: "68", name: "Haut-Rhin", kind: "FR_DEPT", region: "Grand Est", regionAsset: "als" },
   { code: "69", name: "Rhone", kind: "FR_DEPT", region: "Auvergne-Rhone-Alpes", chefLieu: "Lyon", population: 1893423, rarity: "common" },
   { code: "70", name: "Haute-Saone", kind: "FR_DEPT", region: "Bourgogne-Franche-Comte" },
   { code: "71", name: "Saone-et-Loire", kind: "FR_DEPT", region: "Bourgogne-Franche-Comte" },
@@ -134,7 +134,8 @@ export const COUNTRY_CODES: PlateItem[] = [
   { code: "N", name: "Norvege", englishName: "Norway", kind: "EUROPE_COUNTRY", rarity: "medium" },
   { code: "FL", name: "Liechtenstein", englishName: "Liechtenstein", kind: "EUROPE_COUNTRY", rarity: "rare" },
   { code: "IS", name: "Islande", englishName: "Iceland", kind: "EUROPE_COUNTRY", rarity: "rare" },
-  { code: "RSM", name: "Saint-Marin", englishName: "San Marino", kind: "EUROPE_COUNTRY", rarity: "rare" }
+  { code: "RSM", name: "Saint-Marin", englishName: "San Marino", kind: "EUROPE_COUNTRY", rarity: "rare" },
+  { code: "V", name: "Vatican", englishName: "Vatican City", kind: "EUROPE_COUNTRY", capital: "Cite du Vatican", population: 800, rarity: "insane" }
 ];
 
 export function getItemsForMode(mode: GameMode): PlateItem[] {

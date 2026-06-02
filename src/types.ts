@@ -1,5 +1,5 @@
 export type PlateKind = "FR_DEPT" | "EU_COUNTRY" | "EUROPE_COUNTRY";
-export type Rarity = "common" | "medium" | "rare";
+export type Rarity = "common" | "medium" | "rare" | "insane";
 export type GameMode = "mixed" | "france" | "countries";
 export type Locale = "fr" | "en";
 
