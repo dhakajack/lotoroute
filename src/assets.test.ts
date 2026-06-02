@@ -21,6 +21,7 @@ describe("getCountryFlagUrl", () => {
 
   it("maps regions and explicit region assets to logos", () => {
     expect(getRegionLogoUrl("Bretagne")).toContain("/assets/");
+    expect(getRegionLogoUrl("Auvergne-Rhône-Alpes")).toContain("/assets/");
     expect(getRegionLogoUrl("Grand Est", "als")).toContain("/assets/");
     expect(getRegionLogoUrl("Missing")).toBeNull();
   });

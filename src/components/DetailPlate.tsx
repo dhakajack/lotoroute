@@ -1,4 +1,5 @@
 import { getCountryFlagUrl, getRegionLogoUrl } from "../assets";
+import { getGeoNode } from "../data/geo";
 import { getPlateName } from "../data/plates";
 import { t } from "../i18n";
 import type { Locale, PlateItem } from "../types";
@@ -24,6 +25,7 @@ export default function DetailPlate({ item, locale }: DetailPlateProps) {
   const label = item.kind === "FR_DEPT" ? t(locale, "detail.department") : t(locale, "detail.country");
   const primaryPlace = item.kind === "FR_DEPT" ? item.chefLieu : item.capital;
   const primaryPlaceLabel = item.kind === "FR_DEPT" ? t(locale, "detail.chefLieu") : t(locale, "detail.capital");
+  const population = item.population ?? getGeoNode(item.code)?.population;
 
   return (
     <aside className="detail-plate" aria-label={t(locale, "actions.details")}>
@@ -36,9 +38,9 @@ export default function DetailPlate({ item, locale }: DetailPlateProps) {
             {primaryPlaceLabel}: <strong>{primaryPlace}</strong>
           </p>
         ) : null}
-        {typeof item.population === "number" ? (
+        {typeof population === "number" ? (
           <p>
-            {t(locale, "detail.population")}: <strong>{formatPopulation(item.population, locale)}</strong>
+            {t(locale, "detail.population")}: <strong>{formatPopulation(population, locale)}</strong>
           </p>
         ) : null}
       </div>

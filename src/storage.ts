@@ -1,8 +1,10 @@
 import type { Card, Locale, StoredGame } from "./types";
 import { getItemsForMode } from "./data/plates";
+import { isKnownLocationCode } from "./data/geo";
+import { DEFAULT_DIFFICULTY, DEFAULT_LOCATION_CODE, DIFFICULTY_LEVELS } from "./game/difficulty";
 import { DEFAULT_BOARD_SIZE, DEFAULT_MODE, generateCard } from "./game/generator";
 
-const STORAGE_KEY = "autoroloto.game.v1";
+const STORAGE_KEY = "lotoroute.game.v1";
 const DEFAULT_LOCALE: Locale = "fr";
 
 export function loadStoredGame(): StoredGame {
@@ -47,7 +49,12 @@ export function clearStoredGame(): void {
 export function createDefaultGame(): StoredGame {
   return {
     locale: DEFAULT_LOCALE,
-    card: generateCard({ size: DEFAULT_BOARD_SIZE, mode: DEFAULT_MODE })
+    card: generateCard({
+      size: DEFAULT_BOARD_SIZE,
+      mode: DEFAULT_MODE,
+      difficulty: DEFAULT_DIFFICULTY,
+      locationCode: DEFAULT_LOCATION_CODE
+    })
   };
 }
 
@@ -77,6 +84,9 @@ function isValidCard(card: unknown): card is Card {
     typeof candidate.size === "number" &&
     candidate.size > 0 &&
     (candidate.mode === "mixed" || candidate.mode === "france" || candidate.mode === "countries") &&
+    isValidDifficulty(candidate.difficulty) &&
+    typeof candidate.locationCode === "string" &&
+    isKnownLocationCode(candidate.locationCode) &&
     Array.isArray(candidate.squares) &&
     candidate.squares.length === squareCount &&
     typeof candidate.marked === "object" &&
@@ -88,4 +98,8 @@ function isValidCard(card: unknown): card is Card {
   }
 
   return false;
+}
+
+function isValidDifficulty(difficulty: unknown): difficulty is Card["difficulty"] {
+  return typeof difficulty === "string" && DIFFICULTY_LEVELS.includes(difficulty as Card["difficulty"]);
 }

@@ -9,9 +9,14 @@ import { DEFAULT_BOARD_SIZE, generateCard } from "./game/generator";
 import { detectWinningLines, getWinningIndexSet } from "./game/win";
 import { t } from "./i18n";
 import { loadStoredGame, saveStoredGame } from "./storage";
-import type { Card, GameMode, Locale, PlateItem } from "./types";
+import type { Card, DifficultyLevel, GameMode, Locale, PlateItem } from "./types";
 
-type ConfirmAction = "reset" | "new-card" | "mode" | null;
+type ConfirmAction = "reset" | "new-card" | "setup" | null;
+type PendingSetup = {
+  mode: GameMode;
+  difficulty: DifficultyLevel;
+  locationCode: string;
+};
 
 export default function App() {
   const [storedGame, setStoredGame] = useState(loadStoredGame);
@@ -19,7 +24,7 @@ export default function App() {
   const [detailItem, setDetailItem] = useState<PlateItem | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [confirmAction, setConfirmAction] = useState<ConfirmAction>(null);
-  const [pendingMode, setPendingMode] = useState<GameMode | null>(null);
+  const [pendingSetup, setPendingSetup] = useState<PendingSetup | null>(null);
   const [haptics, setHaptics] = useState(true);
 
   const { card, locale } = storedGame;
@@ -69,21 +74,50 @@ export default function App() {
       return;
     }
 
-    setPendingMode(nextMode);
-    setConfirmAction("mode");
+    stageSetupChange({ mode: nextMode });
   }
 
-  function confirmModeChange() {
-    if (!pendingMode) {
+  function changeDifficulty(nextDifficulty: DifficultyLevel) {
+    if (nextDifficulty === card.difficulty) {
+      return;
+    }
+
+    stageSetupChange({ difficulty: nextDifficulty });
+  }
+
+  function changeLocation(nextLocationCode: string) {
+    if (nextLocationCode === card.locationCode) {
+      return;
+    }
+
+    stageSetupChange({ locationCode: nextLocationCode });
+  }
+
+  function stageSetupChange(change: Partial<PendingSetup>) {
+    setPendingSetup({
+      mode: change.mode ?? card.mode,
+      difficulty: change.difficulty ?? card.difficulty,
+      locationCode: change.locationCode ?? card.locationCode
+    });
+    setConfirmAction("setup");
+  }
+
+  function confirmSetupChange() {
+    if (!pendingSetup) {
       setConfirmAction(null);
       return;
     }
 
     setStoredGame((current) => ({
       ...current,
-      card: generateCard({ size: DEFAULT_BOARD_SIZE, mode: pendingMode })
+      card: generateCard({
+        size: DEFAULT_BOARD_SIZE,
+        mode: pendingSetup.mode,
+        difficulty: pendingSetup.difficulty,
+        locationCode: pendingSetup.locationCode
+      })
     }));
-    setPendingMode(null);
+    setPendingSetup(null);
     setConfirmAction(null);
     setMenuOpen(false);
     setDetailItem(null);
@@ -92,7 +126,7 @@ export default function App() {
   function resetMarks() {
     updateCard((currentCard) => ({ ...currentCard, marked: {} }));
     setConfirmAction(null);
-    setPendingMode(null);
+    setPendingSetup(null);
     setMenuOpen(false);
     setDetailItem(null);
   }
@@ -100,10 +134,15 @@ export default function App() {
   function newCard() {
     setStoredGame((current) => ({
       ...current,
-      card: generateCard({ size: DEFAULT_BOARD_SIZE, mode: current.card.mode })
+      card: generateCard({
+        size: DEFAULT_BOARD_SIZE,
+        mode: current.card.mode,
+        difficulty: current.card.difficulty,
+        locationCode: current.card.locationCode
+      })
     }));
     setConfirmAction(null);
-    setPendingMode(null);
+    setPendingSetup(null);
     setMenuOpen(false);
     setDetailItem(null);
   }
@@ -121,11 +160,11 @@ export default function App() {
             message: t(locale, "confirm.newMessage"),
             onConfirm: newCard
           }
-        : confirmAction === "mode"
+        : confirmAction === "setup"
           ? {
-              title: t(locale, "confirm.modeTitle"),
-              message: t(locale, "confirm.modeMessage"),
-              onConfirm: confirmModeChange
+              title: t(locale, "confirm.setupTitle"),
+              message: t(locale, "confirm.setupMessage"),
+              onConfirm: confirmSetupChange
             }
         : null;
 
@@ -136,11 +175,15 @@ export default function App() {
         open={menuOpen}
         locale={locale}
         mode={card.mode}
+        difficulty={card.difficulty}
+        locationCode={card.locationCode}
         haptics={haptics}
         seed={card.seed}
         onOpenChange={setMenuOpen}
         onLocaleChange={changeLocale}
         onModeChange={changeMode}
+        onDifficultyChange={changeDifficulty}
+        onLocationChange={changeLocation}
         onHapticsChange={setHaptics}
         onResetRequest={() => setConfirmAction("reset")}
         onNewCardRequest={() => setConfirmAction("new-card")}
@@ -167,7 +210,7 @@ export default function App() {
           message={confirmCopy.message}
           onCancel={() => {
             setConfirmAction(null);
-            setPendingMode(null);
+            setPendingSetup(null);
           }}
           onConfirm={confirmCopy.onConfirm}
         />

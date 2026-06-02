@@ -57,19 +57,19 @@ const regionAssets: Record<string, string> = {
 };
 
 const regionCodes: Record<string, keyof typeof regionAssets> = {
-  "Auvergne-Rhone-Alpes": "ara",
-  "Bourgogne-Franche-Comte": "bfc",
+  "Auvergne-Rhône-Alpes": "ara",
+  "Bourgogne-Franche-Comté": "bfc",
   Bretagne: "bre",
   "Centre-Val de Loire": "cvl",
   Corse: "cor",
   "Grand Est": "ges",
   "Hauts-de-France": "hdf",
-  "Ile-de-France": "idf",
+  "Île-de-France": "idf",
   Normandie: "nor",
   "Nouvelle-Aquitaine": "naq",
   Occitanie: "occ",
   "Pays de la Loire": "pdl",
-  "Provence-Alpes-Cote d'Azur": "pac"
+  "Provence-Alpes-Côte d'Azur": "pac"
 };
 
 const countryFlagCodes: Record<string, keyof typeof flagAssets> = {

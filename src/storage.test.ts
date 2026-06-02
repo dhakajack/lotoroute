@@ -13,6 +13,8 @@ describe("storage", () => {
     expect(game.locale).toBe("fr");
     expect(game.card.size).toBe(5);
     expect(game.card.mode).toBe("mixed");
+    expect(game.card.difficulty).toBe("average");
+    expect(game.card.locationCode).toBe("75");
   });
 
   it("loads a valid stored game", () => {
@@ -27,9 +29,22 @@ describe("storage", () => {
   });
 
   it("falls back when storage contains malformed JSON", () => {
-    localStorage.setItem("autoroloto.game.v1", "{not-json");
+    localStorage.setItem("lotoroute.game.v1", "{not-json");
 
     expect(loadStoredGame().locale).toBe("fr");
+  });
+
+  it("does not migrate old Autoroloto saves", () => {
+    localStorage.setItem(
+      "autoroloto.game.v1",
+      JSON.stringify({
+        locale: "en",
+        card: generateCard({ seed: "OLD", mode: "france", size: 5 })
+      })
+    );
+
+    expect(loadStoredGame().locale).toBe("fr");
+    expect(loadStoredGame().card.seed).not.toBe("OLD");
   });
 
   it("falls back when a stored card contains stale dataset items", () => {
@@ -43,5 +58,20 @@ describe("storage", () => {
     saveStoredGame({ locale: "fr", card: stale });
 
     expect(loadStoredGame().card.squares.some((item) => item.code === "976")).toBe(false);
+  });
+
+  it("falls back when stored setup fields are invalid", () => {
+    const stored = {
+      locale: "fr" as const,
+      card: {
+        ...generateCard({ seed: "BAD-SETUP", mode: "mixed", size: 5 }),
+        difficulty: "legendary",
+        locationCode: "F"
+      }
+    };
+
+    saveStoredGame(stored as never);
+
+    expect(loadStoredGame().card.seed).not.toBe("BAD-SETUP");
   });
 });

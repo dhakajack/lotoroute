@@ -1,4 +1,4 @@
-import type { GameMode, Locale, PlateItem, WinningLine } from "./types";
+import type { DifficultyLevel, GameMode, Locale, PlateItem, WinningLine } from "./types";
 
 type TranslationKey =
   | "actions.close"
@@ -10,8 +10,16 @@ type TranslationKey =
   | "actions.details"
   | "actions.seed"
   | "actions.mode"
+  | "actions.difficulty"
+  | "actions.location"
+  | "actions.manual"
+  | "actions.gps"
+  | "actions.useGps"
   | "actions.language"
   | "actions.haptics"
+  | "setup.locationPlaceholder"
+  | "setup.locationNoMatch"
+  | "setup.gpsUnavailable"
   | "win.single"
   | "win.multiple"
   | "confirm.resetTitle"
@@ -20,10 +28,11 @@ type TranslationKey =
   | "confirm.newMessage"
   | "confirm.modeTitle"
   | "confirm.modeMessage"
+  | "confirm.setupTitle"
+  | "confirm.setupMessage"
   | "detail.department"
   | "detail.country"
   | "detail.region"
-  | "detail.rarity"
   | "detail.chefLieu"
   | "detail.capital"
   | "detail.population"
@@ -32,9 +41,11 @@ type TranslationKey =
   | "mode.mixed"
   | "mode.france"
   | "mode.countries"
-  | "rarity.common"
-  | "rarity.medium"
-  | "rarity.rare";
+  | "difficulty.cakewalk"
+  | "difficulty.easy"
+  | "difficulty.average"
+  | "difficulty.challenging"
+  | "difficulty.insane";
 
 const messages: Record<Locale, Record<TranslationKey, string>> = {
   fr: {
@@ -44,34 +55,45 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     "actions.newCard": "Nouvelle carte",
     "actions.resetMarks": "Effacer les marques",
     "actions.options": "Options",
-    "actions.details": "Details",
+    "actions.details": "Détails",
     "actions.seed": "Graine",
     "actions.mode": "Mode",
+    "actions.difficulty": "Difficulté",
+    "actions.location": "Position",
+    "actions.manual": "Manuel",
+    "actions.gps": "GPS",
+    "actions.useGps": "Utiliser le GPS",
     "actions.language": "Langue",
     "actions.haptics": "Vibrations",
-    "win.single": "Ligne complete",
-    "win.multiple": "Lignes completes",
+    "setup.locationPlaceholder": "Code département ou pays",
+    "setup.locationNoMatch": "Aucun code valide",
+    "setup.gpsUnavailable": "GPS indisponible",
+    "win.single": "Ligne complète",
+    "win.multiple": "Lignes complètes",
     "confirm.resetTitle": "Effacer les marques ?",
-    "confirm.resetMessage": "La carte reste la meme, mais toutes les cases cochees seront effacees.",
+    "confirm.resetMessage": "La carte reste la même, mais toutes les cases cochées seront effacées.",
     "confirm.newTitle": "Nouvelle carte ?",
-    "confirm.newMessage": "La carte actuelle sera remplacee par un nouveau tirage.",
+    "confirm.newMessage": "La carte actuelle sera remplacée par un nouveau tirage.",
     "confirm.modeTitle": "Changer de mode ?",
     "confirm.modeMessage": "Changer de mode remplacera la carte actuelle par un nouveau tirage.",
-    "detail.department": "Departement",
+    "confirm.setupTitle": "Changer la configuration ?",
+    "confirm.setupMessage": "Ce changement remplacera la carte actuelle par un nouveau tirage.",
+    "detail.department": "Département",
     "detail.country": "Pays",
-    "detail.region": "Region",
-    "detail.rarity": "Frequence",
+    "detail.region": "Région",
     "detail.chefLieu": "Chef-lieu",
     "detail.capital": "Capitale",
     "detail.population": "Population",
-    "detail.empty": "Appui long pour afficher les details",
+    "detail.empty": "Appui long pour afficher les détails",
     "learning.empty": "Touchez une plaque",
     "mode.mixed": "France + Europe",
     "mode.france": "France",
     "mode.countries": "Pays",
-    "rarity.common": "courant",
-    "rarity.medium": "moyen",
-    "rarity.rare": "rare"
+    "difficulty.cakewalk": "Balade",
+    "difficulty.easy": "Facile",
+    "difficulty.average": "Normal",
+    "difficulty.challenging": "Corsé",
+    "difficulty.insane": "Dément"
   },
   en: {
     "actions.close": "Close",
@@ -83,8 +105,16 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     "actions.details": "Details",
     "actions.seed": "Seed",
     "actions.mode": "Mode",
+    "actions.difficulty": "Difficulty",
+    "actions.location": "Location",
+    "actions.manual": "Manual",
+    "actions.gps": "GPS",
+    "actions.useGps": "Use GPS",
     "actions.language": "Language",
     "actions.haptics": "Vibration",
+    "setup.locationPlaceholder": "Department or country code",
+    "setup.locationNoMatch": "No valid code yet",
+    "setup.gpsUnavailable": "GPS unavailable",
     "win.single": "Complete line",
     "win.multiple": "Complete lines",
     "confirm.resetTitle": "Clear marks?",
@@ -93,11 +123,12 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     "confirm.newMessage": "The current card will be replaced with a new draw.",
     "confirm.modeTitle": "Change mode?",
     "confirm.modeMessage": "Changing mode will replace the current card with a new draw.",
+    "confirm.setupTitle": "Change setup?",
+    "confirm.setupMessage": "This change will replace the current card with a new draw.",
     "detail.department": "Department",
     "detail.country": "Country",
     "detail.region": "Region",
-    "detail.rarity": "Frequency",
-    "detail.chefLieu": "Capital",
+    "detail.chefLieu": "Chef-lieu",
     "detail.capital": "Capital",
     "detail.population": "Population",
     "detail.empty": "Long press a square for details",
@@ -105,9 +136,11 @@ const messages: Record<Locale, Record<TranslationKey, string>> = {
     "mode.mixed": "France + Europe",
     "mode.france": "France",
     "mode.countries": "Countries",
-    "rarity.common": "common",
-    "rarity.medium": "medium",
-    "rarity.rare": "rare"
+    "difficulty.cakewalk": "Cake walk",
+    "difficulty.easy": "Easy",
+    "difficulty.average": "Average",
+    "difficulty.challenging": "Challenging",
+    "difficulty.insane": "Insane"
   }
 };
 
@@ -117,6 +150,10 @@ export function t(locale: Locale, key: TranslationKey): string {
 
 export function modeLabel(locale: Locale, mode: GameMode): string {
   return t(locale, `mode.${mode}`);
+}
+
+export function difficultyLabel(locale: Locale, difficulty: DifficultyLevel): string {
+  return t(locale, `difficulty.${difficulty}`);
 }
 
 export function plateKindLabel(locale: Locale, item: PlateItem): string {

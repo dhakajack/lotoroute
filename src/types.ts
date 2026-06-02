@@ -1,7 +1,7 @@
 export type PlateKind = "FR_DEPT" | "EU_COUNTRY" | "EUROPE_COUNTRY";
-export type Rarity = "common" | "medium" | "rare" | "insane";
 export type GameMode = "mixed" | "france" | "countries";
 export type Locale = "fr" | "en";
+export type DifficultyLevel = "cakewalk" | "easy" | "average" | "challenging" | "insane";
 
 export type PlateItem = {
   code: string;
@@ -15,7 +15,6 @@ export type PlateItem = {
   population?: number;
   assetCode?: string;
   regionAsset?: string;
-  rarity?: Rarity;
 };
 
 export type Card = {
@@ -23,6 +22,8 @@ export type Card = {
   seed: string;
   size: number;
   mode: GameMode;
+  difficulty: DifficultyLevel;
+  locationCode: string;
   squares: PlateItem[];
   marked: Record<string, boolean>;
   createdAt: string;

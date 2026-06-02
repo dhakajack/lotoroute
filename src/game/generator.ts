@@ -1,5 +1,6 @@
 import { getItemsForMode } from "../data/plates";
-import type { Card, GameMode, PlateItem } from "../types";
+import type { Card, DifficultyLevel, GameMode, PlateItem } from "../types";
+import { DEFAULT_DIFFICULTY, DEFAULT_LOCATION_CODE, pickWeightedByDifficulty, scoreItemsForLocation } from "./difficulty";
 import { createReadableSeed, createSeededRandom } from "./random";
 
 export const DEFAULT_BOARD_SIZE = 5;
@@ -9,10 +10,14 @@ export function generateCard(options: {
   seed?: string;
   size?: number;
   mode?: GameMode;
+  difficulty?: DifficultyLevel;
+  locationCode?: string;
   createdAt?: string;
 } = {}): Card {
   const size = options.size ?? DEFAULT_BOARD_SIZE;
   const mode = options.mode ?? DEFAULT_MODE;
+  const difficulty = options.difficulty ?? DEFAULT_DIFFICULTY;
+  const locationCode = options.locationCode ?? DEFAULT_LOCATION_CODE;
   const seed = options.seed ?? createReadableSeed();
   const pool = getItemsForMode(mode);
   const squareCount = size * size;
@@ -21,13 +26,15 @@ export function generateCard(options: {
     throw new Error(`Not enough plate items for a ${size}x${size} ${mode} card.`);
   }
 
-  const squares = pickUnique(pool, squareCount, seed);
+  const squares = pickWeightedByDifficulty(scoreItemsForLocation(pool, locationCode), squareCount, seed, difficulty);
 
   return {
-    id: `${mode}-${size}-${seed}`,
+    id: `${mode}-${difficulty}-${locationCode}-${size}-${seed}`,
     seed,
     size,
     mode,
+    difficulty,
+    locationCode,
     squares,
     marked: {},
     createdAt: options.createdAt ?? new Date().toISOString()
