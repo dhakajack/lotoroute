@@ -25,7 +25,7 @@ type OptionsMenuProps = {
 
 const modes: GameMode[] = ["mixed", "france", "countries"];
 
-const sourceCodeUrl = "https://github.com/placeholder/lotoroute";
+const sourceCodeUrl = "https://github.com/dhakajack/lotoroute";
 
 const creditLinks = {
   font: "https://github.com/playbeing/dinish",

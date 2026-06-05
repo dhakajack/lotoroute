@@ -1,13 +1,15 @@
 const CACHE_NAME = "lotoroute-v1";
+const scopeUrl = (path) => new URL(path, self.registration.scope).toString();
+const INDEX_URL = scopeUrl("index.html");
 const APP_SHELL = [
-  "/",
-  "/index.html",
-  "/manifest.webmanifest",
-  "/icons/icon.svg",
-  "/icons/maskable.svg",
-  "/icons/icon-192.png",
-  "/icons/icon-512.png",
-  "/icons/maskable-512.png"
+  scopeUrl("./"),
+  INDEX_URL,
+  scopeUrl("manifest.webmanifest"),
+  scopeUrl("icons/icon.svg"),
+  scopeUrl("icons/maskable.svg"),
+  scopeUrl("icons/icon-192.png"),
+  scopeUrl("icons/icon-512.png"),
+  scopeUrl("icons/maskable-512.png")
 ];
 
 self.addEventListener("install", (event) => {
@@ -40,10 +42,10 @@ self.addEventListener("fetch", (event) => {
       fetch(request)
         .then((response) => {
           const copy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put("/index.html", copy));
+          caches.open(CACHE_NAME).then((cache) => cache.put(INDEX_URL, copy));
           return response;
         })
-        .catch(() => caches.match("/index.html"))
+        .catch(() => caches.match(INDEX_URL))
     );
     return;
   }
