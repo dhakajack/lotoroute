@@ -63,3 +63,9 @@ npm run build
 ```
 
 The app has no backend, accounts, analytics, or runtime network dependency.
+
+## License
+
+Lotoroute is available under the MIT License. See `LICENSE` for details.
+
+Third-party fonts, images, regional logos, and public data sources are credited separately in `THIRD_PARTY_NOTICES.md` and remain subject to their own terms.

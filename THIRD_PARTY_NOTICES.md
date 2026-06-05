@@ -31,8 +31,6 @@ The location-aware difficulty model uses a hand-curated metadata file containing
 - Country capitals, population estimates, and country-neighbor relationships are compiled from public reference sources.
 - Ferry/tunnel links and scoring adjustments are game-model assumptions documented in `README.md`.
 
-## Source Code
+## Project License
 
-Repository URL placeholder:
-
-- https://github.com/placeholder/lotoroute
+Original Lotoroute source code and project documentation are licensed by Jack Welch under the MIT License. See `LICENSE` for details.

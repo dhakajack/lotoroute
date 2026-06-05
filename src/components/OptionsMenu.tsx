@@ -263,7 +263,7 @@ function CreditsPanel({ locale, onBack, onClose }: { locale: Locale; onBack: () 
       ? [
           {
             title: "Code source",
-            text: "Le code source sera publié sur GitHub.",
+            text: "Le code source et la documentation du projet Lotoroute sont sous licence MIT, par Jack Welch.",
             links: [{ label: sourceCodeUrl, href: sourceCodeUrl }]
           },
           {
@@ -296,7 +296,7 @@ function CreditsPanel({ locale, onBack, onClose }: { locale: Locale; onBack: () 
       : [
           {
             title: "Source Code",
-            text: "The source code will be published on GitHub.",
+            text: "Lotoroute source code and project documentation are licensed by Jack Welch under the MIT License.",
             links: [{ label: sourceCodeUrl, href: sourceCodeUrl }]
           },
           {
