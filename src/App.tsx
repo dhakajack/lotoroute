@@ -122,6 +122,7 @@ export default function App() {
     setPendingSetup(null);
     setConfirmAction(null);
     setMenuOpen(false);
+    setLearningItem(null);
     setDetailItem(null);
   }
 
@@ -130,6 +131,7 @@ export default function App() {
     setConfirmAction(null);
     setPendingSetup(null);
     setMenuOpen(false);
+    setLearningItem(null);
     setDetailItem(null);
   }
 
